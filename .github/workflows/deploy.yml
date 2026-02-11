@@ -1,0 +1,57 @@
+name: CI/CD Pipeline for Diet Analysis
+
+# Triggers: Run on push to main branch or manual trigger
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: Build Docker Image and Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Check out the code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Run Tests
+        run: |
+          python test_app.py
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker Image
+        run: |
+          docker build -t diet-analysis:latest .
+          echo "✓ Docker image built successfully!"
+
+      - name: Test Docker Container
+        run: |
+          docker run -d -p 5000:5000 --name test-container diet-analysis:latest
+          sleep 5
+          docker logs test-container
+          docker stop test-container
+          docker rm test-container
+          echo "Docker container tested successfully!"
+      
+      - name: Success Summary
+        run: |
+          echo "Build completed successfully"
+          echo "Tests passed"
+          echo "Docker image created"

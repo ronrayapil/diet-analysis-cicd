@@ -1,2 +1,2 @@
-# diet-analysis-cicd
-Cloud-native diet analysis with CI/CD pipeline
+Cloud Native diet analysis application with automated CI/CD pipeline using GitHub Actions.
+
