@@ -6,7 +6,7 @@ app = Flask(__name__)
 def home():
     return jsonify({
         "message": "Diet Analysis API is running!",
-        "version": "1.0",
+        "version": "2.0",
         "status": "healthy"
     })
 
